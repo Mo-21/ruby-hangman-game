@@ -82,4 +82,3 @@ class GameBoard
   end
 end
 GameBoard.new.start_screen
-# p lines
