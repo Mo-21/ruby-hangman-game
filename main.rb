@@ -13,6 +13,21 @@ class GameBoard
     @attempts = 10
   end
 
+  def start_screen
+    print '"new" game or "load" previous game? '
+    game_mode = gets.chomp
+
+    if game_mode == 'load'
+      lines = File.read('progress.txt').split("\n")
+      self.sections = lines[0].split(' ')
+      self.attempts =  lines[1].to_i
+      self.secret_word = lines[2]
+    end
+    new_game
+  end
+
+  private
+
   def choose_secret_word
     dictionary = File.readlines('dictionary.txt').map!(&:chomp).select { |word| word.length > 5 && word.length <= 12 }
     @secret_word = dictionary.sample(1).join('')
@@ -25,7 +40,6 @@ class GameBoard
     puts sections.join(' ')
     puts "You have #{attempts} remain"
     puts 'Start guessing...'
-    puts secret_word
 
     until attempts.zero?
       if !sections.include?('_')
@@ -55,7 +69,7 @@ class GameBoard
       sections[index] = char
       index = secret_word.index(char, index + 1)
     end
-    puts sections.join('')
+    puts sections.join(' ')
   end
 
   def attempts_calc
@@ -63,8 +77,9 @@ class GameBoard
   end
 
   def save_game
-    File.open('progress.txt', 'w').write("#{sections.join('')}\n#{attempts}\n#{secret_word}")
+    File.open('progress.txt', 'w').write("#{sections.join(' ')}\n#{attempts}\n#{secret_word}")
     puts 'game saved'
   end
 end
-GameBoard.new.new_game
+GameBoard.new.start_screen
+# p lines
